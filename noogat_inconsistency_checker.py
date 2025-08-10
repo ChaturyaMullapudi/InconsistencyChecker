@@ -44,7 +44,7 @@ def extract_text_from_images(folder_path):
 def run_gemini_analysis(slides_text):
     prompt = f"""
             You are an expert at reviewing PowerPoint decks for factual and logical inconsistencies.
-            Include  Textual contradictions and contextual Logic gaps also.
+            Include  Textual contradictions and contextual Logic gaps also. Look Into EVERY SLIDE. DONT MISS ANY
 
             Here is the extracted slide text:
             {json.dumps(slides_text, indent=2)}
@@ -54,7 +54,7 @@ def run_gemini_analysis(slides_text):
             1. Validate the local findings and include them in the final output, even if you find them correct as-is.
             2. Identify any additional contradictions or inconsistencies in the data, dates, or claims.
             3. Clearly specify the slides involved in each issue.
-            4. Also include if any content deviates from its primary claim or context..
+            4. Also include if any content deviates from its primary claim or context.
             5. Output ALL results in this format:
 
             [Slide X & Slide Y] ISSUE: <description>
