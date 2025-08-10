@@ -103,12 +103,12 @@ InconsistencyChecker/
 └── README.md          # Documentation
 ```
 
-## Troubleshooting
+## Limitations
 
-### Common Issues
-- **Cache Issues**: Delete the `cache` folder to force reprocessing
-- **Token Limits**: Adjust `MAX_SLIDES_PER_CALL` in the script if needed
-- **Memory Usage**: For large folders, process in smaller batches
+- No cross-deck comparision
+- OCR accuracy depends on image quality
+- Token limits and rate limiting from Gemini API 
+- No comparison of visual elements between slides
 
 ### Verification Commands
 ```powershell
