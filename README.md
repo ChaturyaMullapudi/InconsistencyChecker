@@ -1,14 +1,15 @@
 # Noogat Inconsistency Checker
 
-A Python tool that uses Gemini AI to analyze PowerPoint presentations and images for logical inconsistencies, contradictions, and contextual gaps.
+A Python tool that uses langchain and Gemini AI to analyze PowerPoint presentations and images for logical inconsistencies, contradictions, and contextual gaps.
 
 ## Features
 
-- Extract text from PowerPoint presentations
-- Extract text from images using OCR (Optical Character Recognition)
-- Analyze content using Google's Gemini AI
-- Detect inconsistencies across slides
-- Support for multiple image formats (PNG, JPG, JPEG)
+- Extract text from PowerPoint presentations and images
+- LangChain integration for robust AI interactions
+- Support for batch processing of multiple PowerPoint decks (analyzes each deck independently without cross-deck comparison)
+- Parallel OCR processing for faster image analysis
+- Smart caching system to avoid reprocessing unchanged files
+- Detailed logging of processing steps
 
 ## Prerequisites
 
@@ -16,86 +17,107 @@ A Python tool that uses Gemini AI to analyze PowerPoint presentations and images
 - Tesseract OCR
 - Google Gemini API key
 
-## System Dependencies
+## Installation
 
-### 1. Tesseract OCR Installation
-1. Download the installer from [Tesseract at UB Mannheim](https://github.com/UB-Mannheim/tesseract/wiki)
-2. Run the installer (select "Add to PATH" during installation)
-3. Default installation path: `C:\Program Files\Tesseract-OCR`
-4. Verify installation:
+### 1. Set Up Dependencies
 ```powershell
+# Install Python packages
+pip install -r requirements.txt
+
+# Verify Tesseract installation
 tesseract --version
 ```
 
-## Installation
-
-### 1. Clone the Repository
-```powershell
-git clone https://github.com/ChaturyaMullapudi/InconsistencyChecker.git
-cd InconsistencyChecker
-```
-
-### 2. Set Up Python Environment
-```powershell
-python -m venv venv
-.\venv\Scripts\activate
-```
-
-### 3. Install Dependencies
-
-```powershell
-pip install -r requirements.txt
-```
-
-### 4. Configure Environment Variables
-Create a `.env` file in the project root:
+### 2. Configure Environment
+Create a `.env` file:
 ```env
 GOOGLE_API_KEY=your_gemini_api_key_here
 ```
 
 ## Usage
 
-### Analyzing PowerPoint Files
+### Single PowerPoint File
 ```powershell
-python noogat_inconsistency_checker.py --pptx "path/to/presentation.pptx"
+python app.py --pptx "path/to/presentation.pptx"
 ```
 
-### Analyzing Images
+### Multiple PowerPoint Files
 ```powershell
-python noogat_inconsistency_checker.py --images "path/to/images/folder"
+python app.py --pptx-folder "path/to/presentations/folder"
+```
+
+### Image Analysis
+```powershell
+# Analyze a folder of images
+python app.py --images "path/to/images/folder"
 ```
 
 ### Example Commands
 ```powershell
-# Analyze a PowerPoint file
-python noogat_inconsistency_checker.py --pptx "presentations/deck.pptx"
+# Single PowerPoint file
+python app.py --pptx "data/deck1.pptx"
 
-# Analyze a folder of images
-python noogat_inconsistency_checker.py --images "images/folder"
+# Multiple PowerPoint files
+python app.py --pptx-folder "data/presentations"
+
+# Image folder analysis
+python app.py --images "data/images"
 ```
+
+## Advanced Features
+
+### LangChain Integration
+- Structured prompt management using PromptTemplate
+- Simplified AI model interaction through ChatGoogleGenerativeAI
+- Built-in error handling and response processing
+- Model-agnostic design for easy AI provider switching
+
+### Caching System
+- Cache location: `./cache/`
+- Stores processed text and OCR results
+- Automatically reuses cached results for unchanged files
+- Significantly improves processing speed for repeated analyses
+
+### Parallel Processing
+- Uses ThreadPoolExecutor for parallel OCR processing
+- Improves performance when analyzing multiple images
+- Automatically scales based on system capabilities
+
+### Logging
+The tool provides detailed logging:
+- Processing steps and progress
+- Cache usage information
+- API request status
+- Error messages and warnings
 
 ## Project Structure
 ```
 InconsistencyChecker/
 │
-├── noogat_inconsistency_checker.py  # Main script
-├── requirements.txt                 # Python dependencies
-├── .env                            # Environment variables (create this)
-└── README.md                       # Documentation
+├── app.py              # Main application file
+├── extract.py          # Text extraction utilities
+├── llm.py             # Gemini AI integration
+├── utils.py           # Utility functions and helpers
+├── requirements.txt    # Python dependencies
+├── .env               # Environment variables
+└── README.md          # Documentation
 ```
 
 ## Troubleshooting
 
-### Tesseract Not Found
-- Verify Tesseract installation:
+### Common Issues
+- **Cache Issues**: Delete the `cache` folder to force reprocessing
+- **Token Limits**: Adjust `MAX_SLIDES_PER_CALL` in the script if needed
+- **Memory Usage**: For large folders, process in smaller batches
+
+### Verification Commands
 ```powershell
+# Check Tesseract installation
 tesseract --version
-```
-- Check if Tesseract is in PATH:
-```powershell
-$env:Path -split ';' | Select-String "Tesseract"
-```
-- Update Tesseract path in script if needed:
-```python
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
+# Test environment variables
+python -c "import os; from dotenv import load_dotenv; load_dotenv(); print(os.getenv('GOOGLE_API_KEY'))"
+
+# Clear cache if needed
+rm -r ./cache/*
 ```
